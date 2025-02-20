@@ -11,7 +11,7 @@ migrate:
 superuser:
 	docker compose exec app bash -c "python manage.py createsuperuser"
 shell:
-	docker compose run --rm app shell
+	docker compose exec app bash -c "python manage.py shell"
 lint:
 	docker compose run --rm app ruff check --fix
 test:
