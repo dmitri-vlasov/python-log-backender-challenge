@@ -3,11 +3,11 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - proposed_solution
+      - proposed-solution
   pull_request:
     branches:
       - main
-      - proposed_solution
+      - proposed-solution
 
 jobs:
   test:
