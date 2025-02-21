@@ -1,0 +1,60 @@
+name: CI Pipeline
+
+# Определяем, когда будет запускаться workflow
+on:
+  push:
+    branches:
+      - main
+      - proposed_solution
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Проверяем репозиторий
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.13
+
+      # Устанавливаем зависимости, если это необходимо (например, pip)
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # Устанавливаем зависимости из requirements.txt
+
+      # Запуск тестов
+      - name: Run tests
+        run: |
+          pytest
+
+  create_pr:
+    needs: test  # Это означает, что создание PR зависит от успешного выполнения тестов
+    runs-on: ubuntu-latest
+
+    steps:
+      # Проверяем репозиторий
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Проверяем, если тесты прошли, то создаем PR
+      - name: Create Pull Request
+        if: success()  # Если тесты прошли успешно
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git checkout -b feature-branch
+          git push origin feature-branch
+          gh pr create --title "Automated PR" --body "Automated PR created from GitHub Actions" --base main --head feature-branch
+
+      # Установим gh CLI для взаимодействия с GitHub API
+      - name: Set up GitHub CLI
+        run: |
+          curl -fsSL https://cli.github.com/install.sh | bash
