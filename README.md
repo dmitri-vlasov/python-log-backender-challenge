@@ -1,5 +1,9 @@
 # Die Hard
 
+## Solution
+
+- [Russian - Solution explanation](docs/solution_ru.md)
+
 This is a project with a test task for backend developers.
 
 You can find detailed requirements by clicking the links:
