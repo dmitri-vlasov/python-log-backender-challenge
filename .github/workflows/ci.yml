@@ -64,6 +64,7 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git checkout -b feature-branch
-          git push origin feature-branch
-          gh pr create --title "Automated PR" --body "Automated PR created from GitHub Actions" --base main --head feature-branch
+          # Получаем имя ветки, из которой был сделан пуш
+          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+          # Создаем PR из текущей ветки (BRANCH_NAME) в main
+          gh pr create --title "Automated PR" --body "Automated PR created from GitHub Actions" --base main --head $BRANCH_NAME
