@@ -1,6 +1,5 @@
 name: CI Pipeline
 
-# Определяем, когда будет запускаться workflow
 on:
   push:
     branches:
@@ -43,12 +42,13 @@ jobs:
 
       - name: Build and start containers
         run: |
+          cp src/core/.env.ci src/core/.env
           docker-compose -f docker-compose.yml up -d --build
 
       # Устанавливаем зависимости, если это необходимо (например, pip)
       - name: Install dependencies
         run: |
-          cp src/core/.env.ci src/core/.env
+          
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
