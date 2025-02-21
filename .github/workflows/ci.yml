@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - main
-      - proposed_solution
+      - proposed-solution
   pull_request:
     branches:
       - main
-      - proposed_solution
+      - proposed-solution
 
 jobs:
   test:
