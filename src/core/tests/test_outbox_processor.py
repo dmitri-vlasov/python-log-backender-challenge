@@ -1,3 +1,4 @@
+import json
 from collections.abc import Generator
 
 import msgpack
@@ -21,7 +22,7 @@ def create_outbox_entries() -> list[Outbox]:
                 'test_event_happened',
                 {'__datetime__': True, 'as_str': timezone.now().strftime("%Y%m%dT%H:%M:%S.%f%z")},
                 'Test',
-                f'{"important_value": f"Value{i}", "other_value": {i}}',
+                json.dumps({"important_value": f"Value{i}", "other_value": i}),
             )),
             status=Status.SCHEDULED,
         )
