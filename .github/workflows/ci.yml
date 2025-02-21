@@ -47,13 +47,19 @@ jobs:
   create_pr:
     needs: test  # Это означает, что создание PR зависит от успешного выполнения тестов
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+            token: ${{ secrets.GH_TOKEN }}
 
       # Проверяем, если тесты прошли, то создаем PR
       - name: Create Pull Request
+        with:
+          token: ${{ secrets.GH_TOKEN }}
         if: success()  # Если тесты прошли успешно
         run: |
           git config --global user.name "GitHub Actions"
