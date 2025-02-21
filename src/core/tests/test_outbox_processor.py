@@ -19,7 +19,7 @@ def create_outbox_entries() -> list[Outbox]:
         entry = Outbox.objects.create(
             event_data=msgpack.packb((
                 'test_event_happened',
-                {'__datetime__': True, 'as_str': timezone.now().strftime("%Y%m%dT%H:%M:%S.%f")},
+                {'__datetime__': True, 'as_str': timezone.now().strftime("%Y%m%dT%H:%M:%S.%f%z")},
                 'Test',
                 f'{"important_value": f"Value{i}", "other_value": {i}}',
             )),
