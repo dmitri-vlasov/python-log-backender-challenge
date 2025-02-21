@@ -11,7 +11,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest  # Запускать на последнем доступном Ubuntu
+    runs-on: ubuntu-latest
 
     steps:
       # Проверяем репозиторий
