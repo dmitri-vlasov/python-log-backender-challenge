@@ -1,21 +1,19 @@
 name: CI Pipeline
 
-# Определяем, когда будет запускаться workflow
 on:
   push:
     branches:
-      - main
       - proposed_solution
   pull_request:
     branches:
       - main
+      - proposed_solution
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      # Проверяем репозиторий
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -24,37 +22,48 @@ jobs:
         with:
           python-version: 3.13
 
-      # Устанавливаем зависимости, если это необходимо (например, pip)
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Устанавливаем зависимости из requirements.txt
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-      # Запуск тестов
-      - name: Run tests
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-docker-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
+
+      - name: Set up Docker Compose
         run: |
-          pytest
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Build containers and run tests
+        run: |
+          cp src/core/.env.ci src/core/.env
+          make test
 
   create_pr:
     needs: test  # Это означает, что создание PR зависит от успешного выполнения тестов
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
-      # Проверяем репозиторий
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+            token: ${{ secrets.GH_TOKEN }}
 
       # Проверяем, если тесты прошли, то создаем PR
       - name: Create Pull Request
         if: success()  # Если тесты прошли успешно
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git checkout -b feature-branch
-          git push origin feature-branch
-          gh pr create --title "Automated PR" --body "Automated PR created from GitHub Actions" --base main --head feature-branch
-
-      # Установим gh CLI для взаимодействия с GitHub API
-      - name: Set up GitHub CLI
-        run: |
-          curl -fsSL https://cli.github.com/install.sh | bash
+          # Получаем имя ветки, из которой был сделан пуш
+          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+          # Создаем PR из текущей ветки (BRANCH_NAME) в main
+          gh pr create --title "Automated PR" --body "Automated PR created from GitHub Actions" --base main --head $BRANCH_NAME
