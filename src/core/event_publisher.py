@@ -37,7 +37,7 @@ def publish_event(func: F) -> F:
                 event_type = 'error'
                 event_context = event.error
 
-            event_time_encoded  = {'__datetime__': True, 'as_str': timezone.now().strftime("%Y%m%dT%H:%M:%S.%f")}
+            event_time_encoded  = {'__datetime__': True, 'as_str': timezone.now().strftime('%Y%m%dT%H:%M:%S.%f')}
             event_data = (
                 event_type,
                 event_time_encoded,

@@ -12,7 +12,7 @@ logger = structlog.get_logger(__name__)
 
 def decode_datetime(obj: dict) -> datetime:
     if '__datetime__' in obj:
-        obj = datetime.strptime(obj["as_str"], "%Y%m%dT%H:%M:%S.%f%z")
+        obj = datetime.strptime(obj['as_str'], '%Y%m%dT%H:%M:%S.%f%z')
     return obj
 
 
@@ -28,7 +28,7 @@ def process_outbox_batch(batch_size: int = 1000) -> int:
     processed_count = 0
 
     with transaction.atomic():
-        # Lock up to batch_size events in SCHEDULED status (skip locked to avoid deadlocks)
+        # todo: Lock up events and skip locked to avoid duplicates
         events = Outbox.get_unprocessed_entries(batch_size)
         if not events:
             return 0
@@ -47,6 +47,6 @@ def process_outbox_batch(batch_size: int = 1000) -> int:
         Outbox.mark_as_processed(event_ids)
 
         processed_count = len(event_ids)
-        logger.info("Processed outbox batch", processed_count=processed_count)
+        logger.info('Processed outbox batch', processed_count=processed_count)
 
     return processed_count
