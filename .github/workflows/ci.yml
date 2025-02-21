@@ -42,7 +42,6 @@ jobs:
       - name: Build containers and run tests
         run: |
           cp src/core/.env.ci src/core/.env
-#          make run
           make test
 
   create_pr:
