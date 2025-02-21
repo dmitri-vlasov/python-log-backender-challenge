@@ -59,14 +59,11 @@ jobs:
       # Проверяем, если тесты прошли, то создаем PR
       - name: Create Pull Request
         if: success()  # Если тесты прошли успешно
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git checkout -b feature-branch
           git push origin feature-branch
           gh pr create --title "Automated PR" --body "Automated PR created from GitHub Actions" --base main --head feature-branch
-
-      # Установим gh CLI для взаимодействия с GitHub API
-      - name: Set up GitHub CLI
-        run: |
-          curl -fsSL https://cli.github.com/install.sh | bash
