@@ -58,8 +58,6 @@ jobs:
 
       # Проверяем, если тесты прошли, то создаем PR
       - name: Create Pull Request
-        with:
-          token: ${{ secrets.GH_TOKEN }}
         if: success()  # Если тесты прошли успешно
         run: |
           git config --global user.name "GitHub Actions"
