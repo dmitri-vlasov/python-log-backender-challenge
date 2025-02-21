@@ -6,6 +6,7 @@ import pytest
 from clickhouse_connect.driver import Client
 from django.conf import settings
 
+from core.outbox_processor import process_outbox_batch
 from users.use_cases import CreateUser, CreateUserRequest, UserCreated
 
 pytestmark = [pytest.mark.django_db]
@@ -55,6 +56,8 @@ def test_event_log_entry_published(
     )
 
     f_use_case.execute(request)
+    process_outbox_batch()
+
     log = f_ch_client.query("SELECT * FROM default.event_log WHERE event_type = 'user_created'")
 
     assert log.result_rows == [
