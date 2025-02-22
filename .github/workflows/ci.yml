@@ -3,7 +3,6 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - main
       - proposed-solution
   pull_request:
     branches:
