@@ -40,7 +40,7 @@ class Outbox(TimeStampedModel):
     """
     Outbox model for storing events before processing
     """
-    event_data = models.BinaryField(help_text='Event data pickled')
+    event_data = models.BinaryField(help_text='Event data packed')
 
     status = models.CharField(
         max_length=10,
